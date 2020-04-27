@@ -9,23 +9,27 @@ using namespace std;
 
 vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain, int numMarkovStates) {
 
-    vector<vector<Fraction>> q_matrix;
+    vector<vector<Fraction>> t_matrix;
     vector<vector<int>> connected_states;
     vector<int> num_adjacent_states;
 
     for(int j = 0; j< numMarkovStates; j++) {
         vector<int> empty_matrix;
+        vector<Fraction> empty_fraction_matrix;
         for (int i = 0; i < numMarkovStates; i++) {
             empty_matrix.push_back(0);
             num_adjacent_states.push_back(0);
+            Fraction temp(0, 1);
+            empty_fraction_matrix.push_back(temp);
         }
         connected_states.push_back(empty_matrix);
+        t_matrix.push_back(empty_fraction_matrix);
     }
 
 
     markov_node *root = markovChain.root;
     if (root == NULL)
-        return q_matrix;
+        return t_matrix;
 
 
     // Count States Standard level order traversal code
@@ -44,6 +48,7 @@ vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain, int numMark
         for (markov_node *child: p->children) {
             q.push(child);
             connected_states.at(p->state_num).at(child->state_num) ++;
+            connected_states.at(child->state_num).at(p->state_num) ++;
             if (p->state_name.compare(root->state_name) != 0) {
                 num_adjacent_states.at(p->state_num)++;
             }
@@ -64,6 +69,7 @@ vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain, int numMark
             for (markov_node *child: p->children) {
                 q.push(child);
                 connected_states.at(p->state_num).at(child->state_num) ++;
+                connected_states.at(child->state_num).at(p->state_num) ++;
                 if (p->state_name.compare(root->state_name) != 0) {
                     num_adjacent_states.at(p->state_num)++;
                 }
@@ -71,18 +77,61 @@ vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain, int numMark
             n--;
         }
     }
-    for(int i = 0; i < numMarkovStates; i++){
-        for(int j = 0; j<numMarkovStates; j++){
+
+    for(int i = 0; i<numMarkovStates; i++){
+        for(int j = 0; j<numMarkovStates;j++){
             cout << connected_states.at(i).at(j) << "\t";
         }
         cout << endl;
     }
-    cout<<endl;
-    cout<<"Adjacent State Matrix"<<endl;
+    cout << endl;
+
     for(int i = 0; i<numMarkovStates; i++){
         cout << num_adjacent_states.at(i) << "\t";
     }
     cout << endl;
+    
+    for(int i = 0; i<numMarkovStates; i++){
+        for(int j = 0; j<numMarkovStates; j++){
+            if(j == 0){
+                if(i == 0){
+                    Fraction temp(1,1);
+                    t_matrix.at(j).at(i) = temp;
+                }else{
+                    Fraction temp(0,1);
+                    t_matrix.at(j).at(i) = temp;
+                }
+            }else{
+                int num = connected_states.at(i).at(j);
+                int den = num_adjacent_states.at(j);
+                Fraction temp(num, den);
+                t_matrix.at(j).at(i) = t_matrix.at(j).at(i).Sum(temp);
+            }
+        }
+    }
+
+    vector<vector<Fraction>> q_matrix;
+    vector<Fraction> null_vector;
+    for(int i = 0; i<numMarkovStates-1; i++){
+        Fraction temp(0, 1);
+        null_vector.push_back(temp);
+    }
+    for(int i = 0; i<numMarkovStates-1; i++){
+        q_matrix.push_back(null_vector);
+    }
+    for(int i = 1; i<numMarkovStates; i++){
+        for(int j = 1; j<numMarkovStates; j++){
+            q_matrix.at(i-1).at(j-1) = t_matrix.at(i).at(j);
+        }
+    }
+
+    for(int i = 0; i<numMarkovStates-1; i++){
+        for(int j = 0; j<numMarkovStates-1; j++){
+            q_matrix.at(i).at(j).show();
+            cout<< "\t";
+        }
+        cout<< endl;
+    }
 
     return q_matrix;
 }

@@ -1,8 +1,8 @@
 #include "Fraction.h"
 
 Fraction Fraction::Sum(Fraction otherFraction) {
-    int n = numerator*otherFraction.denominator+otherFraction.numerator*denominator;
-    int d = denominator*otherFraction.denominator;
+    int n = ((numerator) * (otherFraction.denominator)) + ((otherFraction.numerator) * (denominator));
+    int d = (denominator) * (otherFraction.denominator);
     return Fraction(n/gcd(n,d),d/gcd(n,d));
 }
 
@@ -38,7 +38,7 @@ int Fraction::gcd(int n, int d)
 void Fraction::show() // Display method
 {
     if (denominator == 1) // e.g. fraction 2/1 will display simply as 2
-        cout << numerator << endl;
+        cout << numerator;
     else
-        cout << numerator << "/" << denominator << endl;
+        cout << numerator << "/" << denominator;
 }
