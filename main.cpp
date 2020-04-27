@@ -7,15 +7,13 @@
 
 using namespace std;
 
-int numMarkovStates = 0;
-
-vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain) {
+vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain, int numMarkovStates) {
 
     vector<vector<Fraction>> q_matrix;
     vector<vector<int>> connected_states;
     vector<int> num_adjacent_states;
 
-    for(int j = 0; j<numMarkovStates; j++) {
+    for(int j = 0; j< numMarkovStates; j++) {
         vector<int> empty_matrix;
         for (int i = 0; i < numMarkovStates; i++) {
             empty_matrix.push_back(0);
@@ -43,9 +41,12 @@ vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain) {
         }
 
         // Enqueue all children of the dequeued item
-        for (int i = 0; i < p->children.size(); i++) {
-            q.push(p->children[i]);
-            num_adjacent_states.at(p->state_num)++;
+        for (markov_node *child: p->children) {
+            q.push(child);
+            connected_states.at(p->state_num).at(child->state_num) ++;
+            if (p->state_name.compare(root->state_name) != 0) {
+                num_adjacent_states.at(p->state_num)++;
+            }
         }
 
         n--;
@@ -60,30 +61,41 @@ vector<vector<Fraction>> calculate_q_matrix(GeneralTree markovChain) {
             }
 
             // Enqueue all children of the dequeued item
-            for (int i = 0; i < p->children.size(); i++) {
-                q.push(p->children[i]);
-                num_adjacent_states.at(p->state_num)++;
+            for (markov_node *child: p->children) {
+                q.push(child);
+                connected_states.at(p->state_num).at(child->state_num) ++;
+                if (p->state_name.compare(root->state_name) != 0) {
+                    num_adjacent_states.at(p->state_num)++;
+                }
             }
             n--;
         }
     }
     for(int i = 0; i < numMarkovStates; i++){
         for(int j = 0; j<numMarkovStates; j++){
-
+            cout << connected_states.at(i).at(j) << "\t";
         }
+        cout << endl;
     }
+    cout<<endl;
+    cout<<"Adjacent State Matrix"<<endl;
+    for(int i = 0; i<numMarkovStates; i++){
+        cout << num_adjacent_states.at(i) << "\t";
+    }
+    cout << endl;
+
+    return q_matrix;
 }
 
 int main() {
 
     cout << "Enter First State" << endl;
 
-    string nxtState;
-    int numState;
+    string nxtState = "";
+    int numState = 0;
 
     cin >> nxtState;
     markov_node *root = new_markov_node(nxtState, numState);
-    numState++;
 
     // Standard level order traversal code
     // using queue
@@ -107,6 +119,7 @@ int main() {
                     break;
                 }
                 numState ++;
+                cout << numState << endl;
                 markov_node *tempChild = new_markov_node(nxtState, numState);
                 p->children.push_back(tempChild);
                 cout << "Please enter children of node " << p->state_name << " (if no children enter 'done', if finished with tree enter 'finished')" << endl;
@@ -118,21 +131,21 @@ int main() {
             }
 
             // Enqueue all children of the dequeued item
-            for (int i=0; i<p->children.size(); i++)
-                q.push(p->children[i]);
+            for (markov_node *child: p->children)
+                q.push(child);
             n--;
         }
     }
 
-    numMarkovStates = numState;
-    cout << "Here is the created chain: \n";
+
+    //cout << "Here is the created chain: \n";
     GeneralTree markovChain(root);
 
-    markovChain.printTree(markovChain.root);
+    //markovChain.printTree(markovChain.root);
 
     vector<vector<Fraction>> transition_matrix;
 
-    transition_matrix = calculate_q_matrix(markovChain);
+    transition_matrix = calculate_q_matrix(markovChain, numState + 1);
 
     return 0;
 }
