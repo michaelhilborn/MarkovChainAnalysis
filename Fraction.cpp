@@ -1,8 +1,8 @@
 #include "Fraction.h"
 
 Fraction Fraction::Sum(Fraction otherFraction) {
-    int n = ((numerator) * (otherFraction.denominator)) + ((otherFraction.numerator) * (denominator));
-    int d = (denominator) * (otherFraction.denominator);
+    int n = numerator*otherFraction.denominator+otherFraction.numerator*denominator;
+    int d = denominator*otherFraction.denominator;
     return Fraction(n/gcd(n,d),d/gcd(n,d));
 }
 

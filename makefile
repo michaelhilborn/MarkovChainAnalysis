@@ -22,10 +22,10 @@ CXXFLAGS  = -Wall -g
 default: main
 
 # To create the executable file count we need the object files
-# main.o GeneralTree.o, Fraction.o:
+# main.o GeneralTree.o, Fraction.o, MarkovChain.o:
 #
-main:  main.o GeneralTree.o Fraction.o
-	$(CXX) $(CXXFLAGS) -o main main.o GeneralTree.o Fraction.o
+main:  main.o GeneralTree.o Fraction.o MarkovChain.o
+	$(CXX) $(CXXFLAGS) -o main main.o GeneralTree.o Fraction.o MarkovChain.o
 
 # To create the object file countwords.o, we need the source
 # files GeneralTree.cpp GeneralTree.h:
@@ -33,16 +33,22 @@ main:  main.o GeneralTree.o Fraction.o
 GeneralTree.o:  GeneralTree.cpp GeneralTree.h 
 	$(CXX) $(CXXFLAGS) -c GeneralTree.cpp
 
-# To create the object file counter.o, we need the source files
-# counter.c and counter.h:
+# To create the object file MarkovChain.o, we need the source files
+# MarkovChain.cpp and MarkovChain.h, GeneralTree.h, Fraction.h:
+#
+MarkovChain.o:  MarkovChain.cpp MarkovChain.h GeneralTree.h Fraction.h
+	$(CXX) $(CXXFLAGS) -c MarkovChain.cpp
+
+# To create the object file Fraction.o need the source files
+# Fraction.cpp and Fraction.h:
 #
 Fraction.o:  Fraction.cpp Fraction.h 
 	$(CXX) $(CXXFLAGS) -c Fraction.cpp
 
-# To create the object file scanner.o, we need the source files
-# scanner.c and scanner.h:
+# To create the object file main.o, we need the source files
+# main.cpp Fraction.h GeneralTree.h MarkovChain.h:
 #
-main.o:  main.cpp Fraction.h GeneralTree.h 
+main.o:  main.cpp Fraction.h GeneralTree.h MarkovChain.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 # To start over from scratch, type 'make clean'.  This
@@ -50,4 +56,4 @@ main.o:  main.cpp Fraction.h GeneralTree.h
 # files and *~ backup files:
 #
 clean: 
-	$(RM) count *.o *~
+	$(RM) main *.o *~

@@ -2,7 +2,7 @@
 using namespace std;
 
 //Coded by Sahat Yalkabov
-//I received this code from her via stackoverflow
+//I received this code from them via stackoverflow
 
 class Fraction
 {
