@@ -2,6 +2,44 @@
 
 #include "MarkovChain.h"
 
+void printMatrix(vector<vector<Fraction>> matrix, int numRows, int numCols){
+    for(int i = 0; i < numRows; i++){
+        for(int j = 0; j<numCols; j++){
+            matrix.at(i).at(j).show();
+            cout<<"\t";
+        }
+        cout<<endl;
+    }
+}
+vector<vector<Fraction>> MarkovChain::CalculateInverseRref(vector<vector<Fraction>> matrix, vector<vector<Fraction>> i_matrix, int numRows, int numCols){
+    int lead = 0; 
+
+    while (lead < numRows) {
+        Fraction f, g;
+
+        for (int r = 0; r < numRows; r++) { // for each row ...
+            /* calculate divisor and multiplier */
+            f = matrix.at(lead).at(lead);
+            g = matrix.at(r).at(lead).Division(matrix.at(lead).at(lead));
+
+            for (int c = 0; c < numCols; c++) { // for each column ...
+                if (r == lead){
+                    matrix.at(r).at(c) = matrix.at(r).at(c).Division(f);           // make pivot = 1
+                    i_matrix.at(r).at(c) = i_matrix.at(r).at(c).Division(f);
+                }else{
+                    matrix.at(r).at(c) = 
+                        matrix.at(r).at(c).Difference(matrix.at(lead).at(c).Product(g));  // make other = 0
+                    i_matrix.at(r).at(c) =
+                        i_matrix.at(r).at(c).Difference(i_matrix.at(lead).at(c).Product(g));
+                }
+            }
+        }
+
+        lead++;
+    }
+    return i_matrix;
+}
+
 MarkovChain::MarkovChain(GeneralTree* mrkvChain, int numMrkvStates) {
 
     vector<vector<Fraction>> t_matrix;
@@ -72,19 +110,6 @@ MarkovChain::MarkovChain(GeneralTree* mrkvChain, int numMrkvStates) {
             n--;
         }
     }
-
-    for(int i = 0; i<numMrkvStates; i++){
-        for(int j = 0; j<numMrkvStates;j++){
-            cout << connected_states.at(i).at(j) << "\t";
-        }
-        cout << endl;
-    }
-    cout << endl;
-
-    for(int i = 0; i<numMrkvStates; i++){
-        cout << num_adjacent_states.at(i) << "\t";
-    }
-    cout << endl;
     
     for(int i = 0; i<numMrkvStates; i++){
         for(int j = 0; j<numMrkvStates; j++){
@@ -119,11 +144,48 @@ MarkovChain::MarkovChain(GeneralTree* mrkvChain, int numMrkvStates) {
         }
     }
 
+    vector<vector<Fraction>> iminusq_matrix;
+    for(int i = 0; i<numMrkvStates-1; i++){
+        iminusq_matrix.push_back(null_vector);
+    }
+
+    Fraction one(1,1);
+    Fraction zero(0,1);
+
     for(int i = 0; i<numMrkvStates-1; i++){
         for(int j = 0; j<numMrkvStates-1; j++){
-            q_matrix.at(i).at(j).show();
+            if(i == j)
+                iminusq_matrix.at(i).at(j) = one.Difference(q_matrix.at(i).at(j));
+            else
+                iminusq_matrix.at(i).at(j) = zero.Difference(q_matrix.at(i).at(j));
+            iminusq_matrix.at(i).at(j).show();
             cout<< "\t";
         }
-        cout<< endl;
+        cout << endl;
     }
+    vector<vector<Fraction>> i_matrix;
+    for(int i = 0; i<numMrkvStates-1;i++){
+        vector<Fraction> temp;
+        for(int j = 0; j<numMrkvStates-1; j++){
+            if(i==j){
+                Fraction newFraction(1,1);
+                temp.push_back(newFraction);
+            }else{
+                Fraction newFraction(0,1);
+                temp.push_back(newFraction);
+            }
+        }
+        i_matrix.push_back(temp);
+    }
+
+    n_matrix = CalculateInverseRref(iminusq_matrix, i_matrix, numMrkvStates-1, numMrkvStates-1);
+    
+    for(int i = 0; i<numMrkvStates-1; i++){
+        Fraction sum(0,1);
+        for(int j = 0; j<numMrkvStates-1; j++){
+            sum = sum.Sum(n_matrix.at(i).at(j));
+        }
+        t_col.push_back(sum);
+    }
+    
 }

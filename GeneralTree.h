@@ -11,13 +11,13 @@
 using namespace std;
 
 struct markov_node{
-    string state_name;
     int state_num;
+    string state_name;
     int level;
     vector<markov_node *> children;
 };
 
-markov_node *new_markov_node(string state, int num);
+markov_node *new_markov_node(int num);
 
 class GeneralTree {
 public:

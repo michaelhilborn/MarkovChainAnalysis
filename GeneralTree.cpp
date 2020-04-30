@@ -5,9 +5,9 @@
 #include "GeneralTree.h"
 #define SPACING 10
 
-markov_node *new_markov_node(string state, int num){
+markov_node *new_markov_node(int num){
     markov_node *temp = new markov_node;
-    temp->state_name = state;
+    temp->state_name = to_string(num);
     temp->state_num = num;
     return temp;
 }

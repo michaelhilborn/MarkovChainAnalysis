@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring>
+#include <string>
 #include <bits/stdc++.h>
 #include "MarkovChain.h"
 
@@ -8,63 +8,66 @@ using namespace std;
 
 int main() {
 
-    cout << "Enter First State" << endl;
+    string children;
 
-    string nxtState = "";
-    int numState = 0;
+    ifstream markovTxtFile;
+    markovTxtFile.open("./MarkovChainTxt/4-Level-Hairy-Markov-Chain.txt");
 
-    cin >> nxtState;
-    markov_node *root = new_markov_node(nxtState, numState);
+    if (!markovTxtFile) cout << "Could not open the file!" << endl;
+    int numState;
+    string numOfStates;
 
-    // Standard level order traversal code
-    // using queue
-    queue<markov_node *> q;  // Create a queue
-    q.push(root); // Enqueue root
-    bool finished = false;
+    getline (markovTxtFile,numOfStates);
+    numState = stoi(numOfStates);
 
-    while (!q.empty() && !finished){
-        int n = q.size();
-
-        // If this node has children
-        while (n > 0) {
-            // Dequeue an item from queue and print it
-            markov_node *p = q.front();
-            q.pop();
-            cout << "Please enter children of node " << p->state_name << " (if no children enter 'done', if finished with tree enter 'finished')" << endl;
-            cin >> nxtState;
-            while (nxtState.compare("done") != 0) {
-                if(nxtState.compare("finished") == 0){
-                    finished = true;
-                    break;
-                }
-                numState ++;
-                cout << numState << endl;
-                markov_node *tempChild = new_markov_node(nxtState, numState);
-                p->children.push_back(tempChild);
-                cout << "Please enter children of node " << p->state_name << " (if no children enter 'done', if finished with tree enter 'finished')" << endl;
-                cin >> nxtState;
-            }
-
-            if(nxtState.compare("finished") == 0){
-                break;
-            }
-
-            // Enqueue all children of the dequeued item
-            for (markov_node *child: p->children)
-                q.push(child);
-            n--;
-        }
+    vector<markov_node *> chain;
+    for(int i = 0; i < numState; i++){
+        chain.push_back(new_markov_node(i));
     }
+    int i = 0;
+    while(getline(markovTxtFile, children)){
 
+        stringstream ss(children);
+        int childIdx;
+        
+        while(ss>>childIdx){
+            chain.at(i)->children.push_back(chain.at(childIdx));
+            chain.at(childIdx)->level = i+1;
+        }
+        i++;
+    }
+    markov_node *root = chain.at(0);
 
     //cout << "Here is the created chain: \n";
     GeneralTree markovChain(root);
 
-    //markovChain.printTree(markovChain.root);
-
     vector<vector<Fraction>> transition_matrix;
 
-    MarkovChain chainEvaluator(&markovChain, numState + 1);
+    MarkovChain chainEvaluator(&markovChain, numState);
+    vector<Fraction> tm_col;
+    vector<Fraction> t_col = chainEvaluator.getTCol();
 
+    for(int i = 0; i<numState; i++){
+        Fraction zero(0,1);
+        tm_col.push_back(zero);
+    }
+
+    vector<Fraction> statesPerLevel;
+    for(int i = 0; i<numState; i++){
+        Fraction zero(0,1);
+        statesPerLevel.push_back(zero);
+    }
+
+    for(int i = 1; i<chain.size(); i++){
+        tm_col.at(chain.at(i)->level-1) = tm_col.at(chain.at(i)->level-1).Sum(t_col.at(i-1));
+        statesPerLevel.at(chain.at(i)->level-1) = statesPerLevel.at(chain.at(i)->level-1).Sum(Fraction(1,1));
+    }
+    for(int i = 0; i<tm_col.size(); i++){
+        cout<<"| ";
+        tm_col.at(i).show();
+        cout<<" / ";
+        statesPerLevel.at(i).show();
+        cout<<" |"<<endl;
+    }
     return 0;
 }
