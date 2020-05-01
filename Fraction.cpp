@@ -1,31 +1,31 @@
 #include "Fraction.h"
 
 Fraction Fraction::Sum(Fraction otherFraction) {
-    int n = numerator*otherFraction.denominator+otherFraction.numerator*denominator;
-    int d = denominator*otherFraction.denominator;
+    long n = numerator*otherFraction.denominator+otherFraction.numerator*denominator;
+    long d = denominator*otherFraction.denominator;
     return Fraction(n/gcd(n,d),d/gcd(n,d));
 }
 
 Fraction Fraction::Difference(Fraction otherFraction){
-    int n = numerator*otherFraction.denominator-otherFraction.numerator*denominator;
-    int d = denominator*otherFraction.denominator;
+    long n = numerator*otherFraction.denominator-otherFraction.numerator*denominator;
+    long d = denominator*otherFraction.denominator;
     return Fraction(n/gcd(n,d),d/gcd(n,d));
 }
 Fraction Fraction::Product(Fraction otherFraction)
 {
-    int n = numerator*otherFraction.numerator;
-    int d = denominator*otherFraction.denominator;
+    long n = numerator*otherFraction.numerator;
+    long d = denominator*otherFraction.denominator;
     return Fraction(n/gcd(n,d),d/gcd(n,d));
 }
 Fraction Fraction::Division(Fraction otherFraction)
 {
-    int n = numerator*otherFraction.denominator;
-    int d = denominator*otherFraction.numerator;
+    long n = numerator*otherFraction.denominator;
+    long d = denominator*otherFraction.numerator;
     return Fraction(n/gcd(n,d),d/gcd(n,d));
 }
-int Fraction::gcd(int n, int d)
+long Fraction::gcd(long n, long d)
 {
-    int remainder;
+    long remainder;
     while (d != 0)
     {
         remainder = n % d;

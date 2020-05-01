@@ -7,14 +7,14 @@ using namespace std;
 class Fraction
 {
 private:
-    int numerator, denominator;
+    long numerator, denominator;
 public:
     Fraction()
     {
         numerator = 1;
         denominator = 1;
     }
-    Fraction(int n, int d)
+    Fraction(long n, long d)
     {
         numerator = n;
         if (d==0)
@@ -39,7 +39,7 @@ public:
 
     // I got the GCD algorithm from the following source:
     // Source C#: http://www.ww.functionx.com/csharp2/examples/gcd.htm
-    int gcd(int n, int d);
+    long gcd(long n, long d);
 
     void show(); // Display method
 };

@@ -158,10 +158,7 @@ MarkovChain::MarkovChain(GeneralTree* mrkvChain, int numMrkvStates) {
                 iminusq_matrix.at(i).at(j) = one.Difference(q_matrix.at(i).at(j));
             else
                 iminusq_matrix.at(i).at(j) = zero.Difference(q_matrix.at(i).at(j));
-            iminusq_matrix.at(i).at(j).show();
-            cout<< "\t";
         }
-        cout << endl;
     }
     vector<vector<Fraction>> i_matrix;
     for(int i = 0; i<numMrkvStates-1;i++){
