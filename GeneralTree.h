@@ -27,7 +27,12 @@ public:
 
     void printTree(markov_node *root);
 
+    int getNumLevels(){
+    	return numLevels;
+    }
+
 private:
+	int numLevels;
     void printTreeHelper(markov_node *root, int space);
 
 };

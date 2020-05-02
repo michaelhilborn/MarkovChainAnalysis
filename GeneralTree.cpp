@@ -51,6 +51,7 @@ GeneralTree::GeneralTree(markov_node * _root) {
         }
         l++;
     }
+    numLevels = l-1;
 }
 
 void GeneralTree::printTreeHelper(markov_node *root, int space) {
