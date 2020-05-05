@@ -1,6 +1,5 @@
-//
-// Created by mhilborn on 4/26/20.
-//
+//This is a slightly modified header and cpp class that is open for use on
+//GeeksforGeeks
 
 #include "GeneralTree.h"
 #define SPACING 10

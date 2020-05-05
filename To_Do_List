@@ -1,3 +1,4 @@
 To Do:
-Create MarkovChain.cpp and MarkovChain.h
-Change input from commandline to reading from a file
+Refine the program for more clear input. (I can do this after submitting research)
+
+Possibly move output to seperate .txt file

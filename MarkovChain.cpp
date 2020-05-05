@@ -10,6 +10,7 @@ void printMatrix(vector<vector<double>> matrix, int numRows, int numCols){
         cout<<endl;
     }
 }
+//I modified this code from a tutorial on GeeksforGeeks
 vector<vector<double>> MarkovChain::CalculateInverseRref(vector<vector<double>> matrix, vector<vector<double>> i_matrix, int numRows, int numCols){
     int lead = 0; 
 
